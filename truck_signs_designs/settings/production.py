@@ -1,10 +1,5 @@
-import django_heroku
-# import dj-database-url
+
 from .base import *
-
-
-django_heroku.settings(locals())
-
 
 DEBUG = False
 
