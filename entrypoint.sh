@@ -1,22 +1,36 @@
 #!/usr/bin/env bash
 set -e
 
-echo "Waiting for postgres to connect ..."
+echo " Waiting for PostgreSQL at $DOCKER_DB_HOST:$DOCKER_DB_PORT ..."
 
-while ! nc -z db 5432; do
+while ! nc -z "$DOCKER_DB_HOST" "$DOCKER_DB_PORT"; do
   sleep 0.1
 done
 
 echo "PostgreSQL is active"
 
 python manage.py collectstatic --noinput
-python manage.py migrate
 python manage.py makemigrations
+python manage.py migrate
 
-gunicorn truck_signs_designs.wsgi:application --bind 0.0.0.0:8000
+echo "Creating superuser..."
 
+python manage.py shell << END
+import os
+from django.contrib.auth import get_user_model
 
+User = get_user_model()
+username = os.environ.get("DJANGO_SUPERUSER_USERNAME")
+email = os.environ.get("DJANGO_SUPERUSER_EMAIL")
+password = os.environ.get("DJANGO_SUPERUSER_PASSWORD")
 
-echo "Postgresql migrations finished"
+if username and not User.objects.filter(username=username).exists():
+    User.objects.create_superuser(username, email, password)
+    print("Superuser created")
+else:
+    print("Superuser already exists or username missing")
+END
 
-python manage.py runserver
+echo "Postgresql migrations finished – starting Gunicorn..."
+# start gunicorn on port 8020
+exec gunicorn truck_signs_designs.wsgi:application --bind 0.0.0.0:8020
