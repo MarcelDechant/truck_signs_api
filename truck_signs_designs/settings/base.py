@@ -27,8 +27,9 @@ TEMPLATES_DIR = os.path.join(ROOT_BASE_DIR,'templates')
 
 
 
+env.read_env(os.path.join(BASE_DIR, '.env'))
 
-ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1',]
+ALLOWED_HOSTS = env('ALLOWED_HOSTS', default='').split(',')
 
 
 # Application definition
@@ -79,28 +80,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'truck_signs_designs.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/2.2/ref/settings/#databases
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'NAME_OF_DB',
-#         'USER': 'DB_USER_NAME',
-#         'PASSWORD': 'DB_PASSWORD',
-#         'HOST': 'localhost',
-#         'PORT': 'PORT_NUMBER',
-#     }
-# }
-
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -139,24 +118,11 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
-# STATICFILES_DIRS = (os.path.join(ROOT_BASE_DIR, 'static'),)
+
 STATIC_ROOT = os.path.join(ROOT_BASE_DIR,'static/')
 
-# STATICFILES_FINDERS = (
-# 'django.contrib.staticfiles.finders.FileSystemFinder',
-# 'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-# )
+
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(ROOT_BASE_DIR, 'media')
 
-# STRIPE_PUBLISHABLE_KEY=os.getenv("STRIPE_PUBLISHABLE_KEY")
-# STRIPE_SECRET_KEY=os.getenv("STRIPE_SECRET_KEY")
-
-
-
-
-# EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
-# EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
-
-# Activate Django-Heroku.
