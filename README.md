@@ -1,3 +1,190 @@
+# Truck Signs App 
+
+## A modern, containerized App built with Django, designed to be deployed via Docker.
+
+## Table of Contents
+
+1. [Introduction](#introduction)  
+2. [Prerequisites](#prerequisites)  
+3. [Quickstart](#quickstart)  
+4. [Usage](#usage)  
+5. [Environment Variables](#environment-variables)  
+6. [Checklist](checklist.pdf)
+
+---
+
+## Introduction
+
+This full-stack application provides a backend service for managing a truck signs webshop.  
+The system uses PostgreSQL as the database and is ready to be deployed via Docker with a custom (optional) `.env` configuration.
+
+---
+
+## Prerequisites
+
+- A V-Server running Ubuntu/Debian  
+- Docker installed
+
+Make sure your system is up to date:
+
+```sh
+sudo apt update && sudo apt install -y docker.io
+```
+
+---
+
+## Quickstart
+
+1. **Install dependencies:**
+   ```sh
+   sudo apt update && sudo apt install -y docker.io git
+   ```
+
+2. **Clone the repository:**
+   ```sh
+   git clone git@github.com:MarcelDechant/truck_signs_api.git
+   cd truck_signs_api
+   ```
+
+3. **Generate and configure the `.env` file:**  
+   Copy the provided template and adjust it to your needs:
+   ```sh
+   cp truck_signs_designs/settings/simple_env_config.env .env
+   nano .env  # optional
+   ```
+
+4. **Build the Docker image:**
+   ```sh
+   docker build -t truck_api_image .
+   ```
+
+5. **Create the Docker network:**
+   ```sh
+   docker network create truck_signs_net
+   ```
+
+6. **Start the PostgreSQL database container:**
+   ```sh
+   docker run -d \
+     --name truck_db \
+     --network truck_signs_net \
+     -e POSTGRES_DB=trucksigns_db \
+     -e POSTGRES_USER=trucksigns_user \
+     -e POSTGRES_PASSWORD=supertrucksignsuser! \
+     -v trucksigns_pg_data:/var/lib/postgresql/data \
+     --restart on-failure \
+     postgres
+   ```
+
+   ❗ Do **not** expose port 5432 to the internet on a public server!
+
+7. **Start the backend container:**
+   ```sh
+   docker run -d \
+     --name truck_api \
+     --network truck_signs_net \
+     --env-file .env \
+     -e ALLOWED_HOSTS=<your-server-ip> \
+     -p 8020:8020 \
+     --restart on-failure \
+     truck_api_image
+   ```
+
+8. **Access the admin panel:**
+   ```sh
+   http://<your-server-ip>:8020/admin
+   ```
+
+---
+
+## Usage
+
+###  How to Build the Image
+
+To build the image from the Dockerfile:
+
+```sh
+docker build -t truck_api_image .
+```
+
+---
+
+## Environment Variables
+
+All environment variables are configured via the `.env` file.  
+You can find an example here:  
+[`simple_env_config.env`](truck_signs_designs/settings/simple_env_config.env)
+
+Important variables:
+
+```env
+DOCKER_DB_HOST=truck_db
+DOCKER_DB_PORT=5432
+DJANGO_SUPERUSER_USERNAME=admin
+DJANGO_SUPERUSER_EMAIL=admin@example.com
+DJANGO_SUPERUSER_PASSWORD=admin123
+ALLOWED_HOSTS=127.0.0.1
+```
+
+---
+
+###  Managing the Application
+
+**Run migrations manually:**
+
+```sh
+docker exec -it truck_api python manage.py migrate
+```
+
+**Create a Django superuser (if needed):**
+
+```sh
+docker exec -it truck_api python manage.py createsuperuser
+```
+
+**Collect static files manually:**
+
+```sh
+docker exec -it truck_api python manage.py collectstatic --noinput
+```
+
+---
+
+### Managing Containers
+
+Stop the container:
+
+```sh
+docker stop truck_api
+```
+
+Restart the container:
+
+```sh
+docker start truck_api
+```
+
+Remove the container:
+
+```sh
+docker rm truck_api
+```
+
+Rebuild and run:
+
+```sh
+docker build -t truck_api_image .
+docker run -d \
+  --name truck_api \
+  --network truck_signs_net \
+  --env-file .env \
+  -p 8020:8020 \
+  --restart on-failure \
+  truck_api_image
+```
+
+---
+
 <div align="center">
 
 ![Truck Signs](./screenshots/Truck_Signs_logo.png)
