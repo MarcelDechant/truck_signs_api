@@ -65,29 +65,24 @@ sudo apt update && sudo apt install -y docker.io
 
 6. **Start the PostgreSQL database container:**
    ```sh
-   docker run -d \
-     --name truck_db \
-     --network truck_signs_net \
-     -e POSTGRES_DB=trucksigns_db \
-     -e POSTGRES_USER=trucksigns_user \
-     -e POSTGRES_PASSWORD=supertrucksignsuser! \
-     -v trucksigns_pg_data:/var/lib/postgresql/data \
-     --restart on-failure \
-     postgres
+        docker run -d `
+        --name truck_db `
+        --env-file .env `
+        -p 5432:5432 `
+        --network truck_signs_net `
+        postgres:13
    ```
 
    ❗ Do **not** expose port 5432 to the internet on a public server!
 
 7. **Start the backend container:**
    ```sh
-   docker run -d \
-     --name truck_api \
-     --network truck_signs_net \
-     --env-file .env \
-     -e ALLOWED_HOSTS=<your-server-ip> \
-     -p 8020:8020 \
-     --restart on-failure \
-     truck_api_image
+        docker run -d `
+        --name truck_api `
+        --env-file .env `
+        --network truck_signs_net `
+        -p 8020:8020 `
+        truck_api_image
    ```
 
 8. **Access the admin panel:**

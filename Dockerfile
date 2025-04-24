@@ -14,6 +14,9 @@ RUN apt-get update && apt-get install -y \
 # Copy project file into the container
 COPY . .
 
+# Copy the .env file into the container
+COPY .env /app/.env
+
 # Install dependencies
 RUN python -m pip install --no-cache-dir -r requirements.txt
 
