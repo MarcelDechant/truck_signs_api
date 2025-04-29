@@ -68,8 +68,8 @@ sudo apt update && sudo apt install -y docker.io
         docker run -d `
         --name truck_db `
         --env-file .env `
-        -p 5432:5432 `
         --network truck_signs_net `
+        -v pgdata:/var/lib/postgresql/data `
         postgres:13
    ```
 
@@ -81,6 +81,8 @@ sudo apt update && sudo apt install -y docker.io
         --name truck_api `
         --env-file .env `
         --network truck_signs_net `
+        -v static_data:/app/static `
+        -v media_data:/app/media `
         -p 8020:8020 `
         truck_api_image
    ```
