@@ -1,11 +1,13 @@
 import environ
 from .base import *
+import os
 
-DEBUG = True
+
 
 env = environ.Env()
-# reading env file
-environ.Env.read_env()
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+ENV_FILE = os.path.join(BASE_DIR, '.env')
+environ.Env.read_env(ENV_FILE)
 
 SECRET_KEY = env("DOCKER_SECRET_KEY")
 DEBUG = True
@@ -38,3 +40,9 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = env("DOCKER_EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = env("DOCKER_EMAIL_HOST_PASSWORD")
+
+STATIC_URL = '/static/'
+STATIC_ROOT = env('DJANGO_STATIC_ROOT', default='/app/static')
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = env('DJANGO_MEDIA_ROOT', default='/app/media')

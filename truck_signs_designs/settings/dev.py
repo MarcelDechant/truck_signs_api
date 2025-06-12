@@ -1,11 +1,12 @@
 import environ
+import os
 from .base import *
 
 DEBUG = True
 
 env = environ.Env()
 # reading env file
-environ.Env.read_env()
+env.read_env(os.path.join(BASE_DIR, '.env'))
 
 SECRET_KEY= env("SECRET_KEY")
 DEBUG = True
@@ -28,6 +29,8 @@ DATABASES = {
         'PORT': env('DB_PORT'),
     }
 }
+
+
 
 STRIPE_PUBLISHABLE_KEY=env("STRIPE_PUBLISHABLE_KEY")
 STRIPE_SECRET_KEY=env("STRIPE_SECRET_KEY")
